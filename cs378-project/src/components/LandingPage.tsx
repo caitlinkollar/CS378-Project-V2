@@ -1,7 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./LandingPage.module.css";
-import recipeData from "../../demo_recipes.json";
 import AddRecipeModal from "./AddRecipeModal";
 
 interface LandingPageProps {
@@ -14,23 +13,36 @@ interface DemoRecipe {
   steps: unknown;
 }
 
-interface DemoRecipes {
-  recipes: DemoRecipe[];
-}
-
 interface Recipe {
   recipeName: string;
 }
 
-const transformData = (json: DemoRecipes): Recipe[] => {
-  return json.recipes.map((r) => ({
-    recipeName: r.name,
-  }));
-};
+const BLOB_URL = "https://hdmhdmqp368x8vik.public.blob.vercel-storage.com/demo_recipes.json"; // Replace with real blob URL
 
 export default function LandingPage({ onSelectRecipe }: LandingPageProps) {
-  const recipes = transformData(recipeData as DemoRecipes);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      try {
+        const res = await fetch(BLOB_URL, { cache: "no-store" });
+        if (!res.ok) throw new Error("Failed to fetch blob");
+
+        const data = await res.json();
+        if (Array.isArray(data.recipes)) {
+          const transformed: Recipe[] = data.recipes.map((r: DemoRecipe) => ({
+            recipeName: r.name,
+          }));
+          setRecipes(transformed);
+        }
+      } catch (err) {
+        console.error("Error fetching recipes from blob:", err);
+      }
+    };
+
+    fetchRecipes();
+  }, []);
 
   return (
     <div className={styles.container}>
@@ -53,7 +65,6 @@ export default function LandingPage({ onSelectRecipe }: LandingPageProps) {
             >
               <div className={styles.imageWrapper}>
                 <img
-                // NOT GONNA WORK ATM FOR NEW RECIPES BECAUSE WE DONT HAVE COVER IMAGE FOR THEM
                   src={`./images/${formattedRecipe}/cover_photo.jpg`}
                   alt={recipe.recipeName}
                   className={styles.recipeImage}

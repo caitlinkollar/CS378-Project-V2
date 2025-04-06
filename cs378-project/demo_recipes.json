@@ -575,6 +575,167 @@
           "helpfulTip": "Reserve a bit of pasta cooking water to adjust the sauce consistency if needed."
         }
       ]
+    },
+    {
+      "name": "Watergate Cake",
+      "serving_size": 12,
+      "ingredients": [
+        {
+          "item": "Cooking spray",
+          "quantity": "as needed",
+          "substitutions": []
+        },
+        {
+          "item": "white cake mix",
+          "quantity": "1 (14.25-oz.) pkg.",
+          "substitutions": [
+            {
+              "substitution": "yellow cake mix"
+            }
+          ]
+        },
+        {
+          "item": "lemon or lime-flavored sparkling water",
+          "quantity": "1 cup",
+          "substitutions": [
+            {
+              "substitution": "club soda"
+            },
+            {
+              "substitution": "regular water with lemon/lime juice"
+            }
+          ]
+        },
+        {
+          "item": "canola oil",
+          "quantity": "1/2 cup",
+          "substitutions": [
+            {
+              "substitution": "vegetable oil"
+            },
+            {
+              "substitution": "sunflower oil"
+            }
+          ]
+        },
+        {
+          "item": "large eggs",
+          "quantity": "3",
+          "substitutions": [
+            {
+              "substitution": "flax eggs"
+            }
+          ]
+        },
+        {
+          "item": "pistachio instant pudding and pie filling mix",
+          "quantity": "2 (3.4-oz.) pkg.",
+          "substitutions": [
+            {
+              "substitution": "vanilla pudding mix"
+            },
+            {
+              "substitution": "butterscotch pudding mix"
+            }
+          ]
+        },
+        {
+          "item": "kosher salt",
+          "quantity": "1 tsp., divided",
+          "substitutions": [
+            {
+              "substitution": "sea salt"
+            }
+          ]
+        },
+        {
+          "item": "sweetened flaked coconut",
+          "quantity": "1/2 cup",
+          "substitutions": [
+            {
+              "substitution": "unsweetened coconut"
+            }
+          ]
+        },
+        {
+          "item": "finely chopped toasted pecans",
+          "quantity": "1/4 cup",
+          "substitutions": [
+            {
+              "substitution": "walnuts"
+            }
+          ]
+        },
+        {
+          "item": "finely chopped toasted pistachios",
+          "quantity": "1/4 cup",
+          "substitutions": [
+            {
+              "substitution": "chopped almonds"
+            }
+          ]
+        },
+        {
+          "item": "heavy whipping cream",
+          "quantity": "2 cups",
+          "substitutions": [
+            {
+              "substitution": "whipped topping"
+            }
+          ]
+        },
+        {
+          "item": "powdered sugar",
+          "quantity": "1/2 cup",
+          "substitutions": [
+            {
+              "substitution": "granulated sugar"
+            }
+          ]
+        }
+      ],
+      "steps": [
+        {
+          "stepNumber": 1,
+          "totalSteps": 4,
+          "title": "Prepare oven and baking pan",
+          "description": "Preheat oven to 350°F. Spray a 13- x 9-inch baking pan with cooking spray; set aside.",
+          "imageUrl": "/images/spaghetti_carbonara/1.jpg",
+          "timerDuration": 5,
+          "demonstration": "Watch how to properly preheat and prepare your baking pan for best results.",
+          "helpfulTip": "Make sure your oven is fully preheated before placing your cake inside."
+        },
+        {
+          "stepNumber": 2,
+          "totalSteps": 4,
+          "title": "Make cake batter",
+          "description": "Beat cake mix, sparkling water, oil, eggs, 1 package of the pudding mix, and 1/2 teaspoon of the salt in a large bowl with an electric mixer on medium speed until light and fluffy, about 2 minutes. Fold in coconut, pecans, and pistachios.",
+          "imageUrl": "/images/spaghetti_carbonara/1.jpg",
+          "timerDuration": 10,
+          "demonstration": "Mix until just combined for a fluffy texture.",
+          "helpfulTip": "Avoid overmixing to keep the cake light and airy."
+        },
+        {
+          "stepNumber": 3,
+          "totalSteps": 4,
+          "title": "Bake cake",
+          "description": "Pour into prepared pan, and spread in an even layer. Bake in preheated oven until top is lightly golden and a wooden pick inserted in center comes out clean, 25 to 30 minutes. Let cool completely in pan on a wire rack, about 1 1/2 hours.",
+          "imageUrl": "/images/spaghetti_carbonara/1.jpg",
+          "timerDuration": 30,
+          "demonstration": "Check for doneness with a toothpick.",
+          "helpfulTip": "Let the cake cool completely to prevent the frosting from melting."
+        },
+        {
+          "stepNumber": 4,
+          "totalSteps": 4,
+          "title": "Make frosting",
+          "description": "Beat cream in a large bowl with an electric mixer on medium speed until just starting to thicken, about 3 minutes. Add powdered sugar, 3 tablespoons of the remaining pudding mix, and remaining 1/2 teaspoon salt; beat on medium speed until thickened and smooth, about 1 minute. Spoon onto cooled cake, spreading into an even layer; swirl decoratively if desired. Garnish with coconut and pistachios.",
+          "imageUrl": "/images/spaghetti_carbonara/1.jpg",
+          "timerDuration": 10,
+          "demonstration": "Watch how to create a smooth frosting finish.",
+          "helpfulTip": "Use cold cream for easier whipping."
+        }
+      ]
     }
   ]
 }
