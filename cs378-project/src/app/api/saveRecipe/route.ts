@@ -1,15 +1,16 @@
 import { NextResponse } from 'next/server';
 import { put } from '@vercel/blob';
-import { promises as fs } from 'fs';
+//import { promises as fs } from 'fs';
 import path from 'path';
 
 interface RecipeData {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   recipes: any[]; // Replace with better type
 }
 
 const BLOB_KEY = 'demo_recipes.json';
 const BLOB_URL = 'https://hdmhdmqp368x8vik.public.blob.vercel-storage.com/demo_recipes.json';
-const LOCAL_JSON_PATH = path.join(process.cwd(), 'demo_recipes.json');
+//const LOCAL_JSON_PATH = path.join(process.cwd(), 'demo_recipes.json');
 
 export async function POST(request: Request) {
   try {
@@ -23,7 +24,8 @@ export async function POST(request: Request) {
     let newRecipeData;
     try {
       newRecipeData = JSON.parse(recipeJsonString);
-    } catch (parseError) {
+    }catch (parseError) {
+      console.error('Failed to parse JSON:', parseError);
       return NextResponse.json({ message: 'Invalid JSON format' }, { status: 400 });
     }
 
@@ -32,6 +34,7 @@ export async function POST(request: Request) {
     }
 
     const newRecipe = newRecipeData.recipes[0];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let existingRecipes: any[] = [];
 
     // Attempt to fetch the latest blob first
