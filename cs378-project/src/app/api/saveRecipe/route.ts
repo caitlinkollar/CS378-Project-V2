@@ -49,30 +49,32 @@ export async function POST(request: Request) {
       console.warn("Blob fetch failed:", err);
     }
 
+    // COMMENTED OUT BECAUSE I DON'T WANT TO USE THE LOCAL FILE
     // If blob is empty or errored, try local file
-    if (existingRecipes.length === 0) {
-      try {
-        const file = await fs.readFile(LOCAL_JSON_PATH, "utf-8");
-        const fileData = JSON.parse(file);
-        if (Array.isArray(fileData.recipes)) {
-          existingRecipes = fileData.recipes;
-        }
-      } catch (err) {
-        console.warn("Local file fallback failed:", err);
-      }
-    }
+    // if (existingRecipes.length === 0) {
+    //   try {
+    //     const file = await fs.readFile(LOCAL_JSON_PATH, "utf-8");
+    //     const fileData = JSON.parse(file);
+    //     if (Array.isArray(fileData.recipes)) {
+    //       existingRecipes = fileData.recipes;
+    //     }
+    //   } catch (err) {
+    //     console.warn("Local file fallback failed:", err);
+    //   }
+    // }
 
     // Add new recipe
     existingRecipes.push(newRecipe);
     const updatedData: RecipeData = { recipes: existingRecipes };
 
+    // COMMENTED OUT BECAUSE I DON'T WANT TO USE THE LOCAL FILE
     // Update local file
-    try {
-      await fs.writeFile(LOCAL_JSON_PATH, JSON.stringify(updatedData, null, 2), "utf-8");
-      console.log("Local file updated");
-    } catch (err) {
-      console.warn("Failed to write local file:", err);
-    }
+    // try {
+    //   await fs.writeFile(LOCAL_JSON_PATH, JSON.stringify(updatedData, null, 2), "utf-8");
+    //   console.log("Local file updated");
+    // } catch (err) {
+    //   console.warn("Failed to write local file:", err);
+    // }
 
     // Upload to blob (overwrite)
     const { url } = await put(BLOB_KEY, JSON.stringify(updatedData, null, 2), {

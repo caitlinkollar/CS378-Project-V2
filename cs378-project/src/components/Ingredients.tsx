@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import styles from "./Ingredients.module.css";
-import recipeData from "../../demo_recipes.json";
 import { FaRegStar, FaStar } from "react-icons/fa";
 
 // Helper function to format the adjusted number
@@ -152,6 +151,8 @@ interface IngredientsProps {
   selected: string;
 }
 
+const BLOB_URL = "https://hdmhdmqp368x8vik.public.blob.vercel-storage.com/demo_recipes.json"; // Add blob URL constant
+
 const transformData = (json: DemoRecipes, selectedRecipe: string): TransformedData | null => {
   const recipe = json.recipes.find((r) => r.name === selectedRecipe);
   if (!recipe) return null;
@@ -192,6 +193,8 @@ const Ingredients: React.FC<IngredientsProps> = ({ onContinueToInstructions, onB
   const [baseServingSize, setBaseServingSize] = useState<number>(1);
   const [currentServingSize, setCurrentServingSize] = useState<number>(1);
   const [servingInput, setServingInput] = useState<string>("1");
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
+  const [error, setError] = useState<string | null>(null); // Add error state
 
   const [showSettings, setShowSettings] = useState(false);
   const [isFavorite, setIsFavorite] = useState<boolean>(() => {
@@ -200,18 +203,44 @@ const Ingredients: React.FC<IngredientsProps> = ({ onContinueToInstructions, onB
   });
 
   useEffect(() => {
-    const data = transformData(recipeData as DemoRecipes, selected);
-    if (data) {
-        setBaseIngredients(data.ingredients);
-        setCurrentIngredients(data.ingredients);
-        setBaseServingSize(data.servingSize);
-        setCurrentServingSize(data.servingSize);
-        setServingInput(data.servingSize.toString());
+    // Fetch data from Blob store
+    const fetchRecipeData = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const res = await fetch(BLOB_URL, { cache: 'no-store' }); // Fetch from Blob
+        if (!res.ok) throw new Error(`Failed to fetch recipe data (status: ${res.status})`);
+
+        const data: DemoRecipes = await res.json();
+        const transformed = transformData(data, selected);
+
+        if (transformed) {
+          setBaseIngredients(transformed.ingredients);
+          setCurrentIngredients(transformed.ingredients); // Initialize current ingredients
+          setBaseServingSize(transformed.servingSize);
+          setCurrentServingSize(transformed.servingSize);
+          setServingInput(transformed.servingSize.toString());
+        } else {
+          throw new Error(`Recipe "${selected}" not found in fetched data.`);
+        }
+      } catch (err) {
+        console.error("Error fetching or processing recipe data:", err);
+        setError(err instanceof Error ? err.message : "An unknown error occurred");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (selected) {
+      fetchRecipeData();
+    } else {
+      // Handle case where no recipe is selected initially (optional)
+      setIsLoading(false);
     }
-  }, [selected]);
+  }, [selected]); // Re-fetch when 'selected' recipe changes
 
   useEffect(() => {
-    if (baseIngredients.length === 0) return; // Wait for ingredients to load
+    if (baseIngredients.length === 0 || isLoading) return; // Wait for ingredients to load
 
     // Use 1 as minimum divisor to prevent division by zero errors if base is 0
     const safeBaseServingSize = baseServingSize === 0 ? 1 : baseServingSize;
@@ -224,34 +253,42 @@ const Ingredients: React.FC<IngredientsProps> = ({ onContinueToInstructions, onB
     setCurrentIngredients(prevIngredients =>
       baseIngredients.map(baseIng => {
           // Find corresponding previous ingredient to preserve selection/dropdown state
-          const prevIng = prevIngredients.find(pi => pi.id === baseIng.id) || baseIng;
+          // Need to be careful here, as prevIngredients might be empty initially if data isn't loaded
+          const prevIng = prevIngredients.find(pi => pi.id === baseIng.id);
+          const currentShowAlternatives = prevIng ? prevIng.showAlternatives : baseIng.showAlternatives;
+          const currentSelected = prevIng ? prevIng.selected : baseIng.selected;
+
+
           // Strip parens, adjust, add parens back
           const strippedBaseAmount = stripParens(baseIng.baseAmount);
           const adjustedAmountStr = adjustQuantity(strippedBaseAmount, ratio);
           const finalAmount = addParens(adjustedAmountStr);
 
           return {
-            ...prevIng, // Keep existing states like 'selected', 'showAlternatives'
-            name: baseIng.name, // Ensure name is from base
-            baseAmount: baseIng.baseAmount, // Keep original base amount
+            // Use baseIng as the primary source, apply prev states if found
+            ...baseIng,
+            selected: currentSelected, // Preserve selected state
+            showAlternatives: currentShowAlternatives, // Preserve dropdown state
             currentAmount: finalAmount, // Set the new adjusted amount
             alternatives: baseIng.alternatives?.map(baseAlt => {
-                const prevAlt = prevIng.alternatives?.find(pa => pa.id === baseAlt.id) || baseAlt;
+                const prevAlt = prevIng?.alternatives?.find(pa => pa.id === baseAlt.id);
+                const currentAltSelected = prevAlt ? prevAlt.selected : baseAlt.selected;
+
                  // Strip parens, adjust, add parens back for alternatives
                 const strippedAltBaseAmount = stripParens(baseAlt.baseAmount);
                 const adjustedAltAmountStr = adjustQuantity(strippedAltBaseAmount, ratio);
                 const finalAltAmount = addParens(adjustedAltAmountStr);
                 return {
-                    ...prevAlt, // Keep existing states
-                    name: baseAlt.name,
-                    baseAmount: baseAlt.baseAmount,
+                    ...baseAlt, // Use base alternative data
+                    selected: currentAltSelected, // Preserve selected state
                     currentAmount: finalAltAmount,
                 };
             }),
           };
       })
     );
-  }, [currentServingSize, baseServingSize, baseIngredients]); // Dependencies
+    // Adjust dependencies - baseIngredients is now set asynchronously
+  }, [currentServingSize, baseServingSize, baseIngredients, isLoading]);
 
   const toggleIngredient = (id: string) => {
     setCurrentIngredients((prev) =>
@@ -316,6 +353,16 @@ const Ingredients: React.FC<IngredientsProps> = ({ onContinueToInstructions, onB
     setIsFavorite(newFavorite);
     localStorage.setItem(`isFavorite_${selected}`, JSON.stringify(newFavorite));
   };
+
+  // --- Add Loading and Error Handling in JSX ---
+  if (isLoading) {
+    return <div className={styles.container}><p>Loading ingredients...</p></div>;
+  }
+
+  if (error) {
+    return <div className={styles.container}><p>Error loading ingredients: {error}</p></div>;
+  }
+  // --- End Loading and Error Handling ---
 
   return (
     <div className={styles.container}>
